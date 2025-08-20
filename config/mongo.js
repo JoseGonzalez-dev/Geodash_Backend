@@ -22,12 +22,12 @@ export const connectDB = async () => {
         })
 
         await mongoose.connect(
-            process.env.MONGO_URI,
-            {
-                maxPoolSize: 50,
-                serverSelectionTimeoutMS: 5000,
-            }
-        )
+        `${process.env.DB_SERVICE}://${process.env.DB_HOST}/${process.env.DB_NAME}`,
+        {
+            maxPoolSize: 50,
+            serverSelectionTimeoutMS: 5000
+        }
+    )
     } catch (error) {
         console.log("Error al conectar a MongoDB", error)
         process.exit(1)

@@ -3,6 +3,9 @@ import cors from "cors"
 import morgan from "morgan"
 import express from "express"
 import { limiter } from "../middlewares/rate.limit.js"
+import userRoutes from '../src/User/user.routes.js'
+import authRoutes from '../src/auth/auth.routes.js'
+import categoryRoutes from '../src/Category/category.routes.js'
 
 const config = (app) => {
     app.use(helmet())
@@ -11,6 +14,12 @@ const config = (app) => {
     app.use(express.json())
     app.use(express.urlencoded({ extended: false }))
     app.use(limiter)
+}
+
+const routes = (app)=>{ 
+   app.use('/user',userRoutes)
+   app.use('/auth',authRoutes)
+   app.use('/category',categoryRoutes)
 }
 
 export const initServer = () => {
