@@ -4,7 +4,7 @@ import morgan from "morgan"
 import express from "express"
 import { limiter } from "../middlewares/rate.limit.js"
 import userRoutes from '../src/User/user.routes.js'
-import authRoutes from '../src/auth/Auth.routes.js'
+import authRoutes from '../src/Auth/auth.routes.js'
 import categoryRoutes from '../src/Category/category.routes.js'
 
 const config = (app) => {
