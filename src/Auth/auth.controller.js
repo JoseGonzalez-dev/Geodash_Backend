@@ -8,7 +8,6 @@ export const register =async(req,res)=>{
         let newUser = new User(data)
         newUser.password =await encrypt(newUser.password)
         newUser.role = 'CLIENT'
-        newUser.profilePicture = req.file.filename ?? null
         await newUser.save()
         return res.send({success:true,message:'User Registeres successfully'})
     } catch (error) {
@@ -28,7 +27,6 @@ export const login = async(req,res)=>{
                 username: user.username,
                 name: user.name,
                 role: user.role,
-                profilePicture:user.profilePicture
             }
             let token = await generateJwt(loggedUser)
             return res.send({success:true,message:`Welcome user ${user.username}`,loggedUser,token})

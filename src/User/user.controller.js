@@ -15,8 +15,7 @@ const addAdmin = async () => {
                 email: `${process.env.ADMIN_EMAIL}`,
                 password: await encrypt(`${process.env.ADMIN_PASSWORD}`),
                 role: "ADMIN",
-                date: Date.now,
-                profilePicture: 'DefaultUser.png'
+                date: Date.now(),
             })
             await usuarioAdmin.save()
             console.log('Default administrator added succesfully')
@@ -33,7 +32,6 @@ export const addUser = async(req,res)=>{
         let data = req.body
         let user = new User(data)
         user.password = await encrypt(user.password)
-        user.profilePicture = req.file.filename ?? null
         await user.save()
         return res.send({success:true,message:'User successfully added'})
     } catch (error) {
