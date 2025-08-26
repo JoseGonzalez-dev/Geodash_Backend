@@ -5,7 +5,7 @@ import {
   getQuestionById,
   updateQuestion,
   deleteQuestion
-} from '../controllers/question.controller.js'
+} from './question.controller.js'
 
 const router = Router()
 
