@@ -1,21 +1,36 @@
 import { Schema, model } from 'mongoose'
 
-const questionSchema = Schema({
-    category: [{
-        type: Schema.Types.ObjectId,
-        ref: 'Category',
-        required: [true, 'Category is required']
-    }],
-    question: {
-        type: String,
-        required: [true, 'Question is required']
+const questionSchema = Schema(
+  {
+    texto: {
+      type: String,
+      required: [true, 'El texto de la pregunta es requerido'],
+      maxLength: [500, 'La pregunta no puede superar los 500 caracteres']
     },
-    answer: {
-        type: String,
-        required: [true, 'Answer is required']
+    id_categoria: {
+      type: Schema.Types.ObjectId, 
+      ref: 'Categoria', 
+      required: [true, 'La categoría es requerida']
+    },
+    dificultad: {
+      type: String,
+      enum: ['Fácil', 'Medio', 'Difícil'],
+      required: [true, 'La dificultad es requerida']
+    },
+    correcto: {
+      type: String,
+      required: [true, 'La respuesta correcta es requerida']
+    },
+    explicacion: {
+      type: String,
+      maxLength: [1000, 'La explicación no puede superar los 1000 caracteres'],
+      default: ''
     }
-},
-    { versionKey: false }
+  },
+  {
+    versionKey: false,
+    timestamps: true
+  }
 )
 
-export default model('Question', questionSchema)
+export default model('Pregunta', questionSchema)
