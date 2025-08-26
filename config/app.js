@@ -6,6 +6,7 @@ import { limiter } from "../middlewares/rate.limit.js"
 import userRoutes from '../src/User/user.routes.js'
 import authRoutes from '../src/Auth/auth.routes.js'
 import categoryRoutes from '../src/Category/category.routes.js'
+import questionRoutes from '../src/Questions/question.routes.js'
 
 const config = (app) => {
     app.use(helmet())
@@ -20,6 +21,7 @@ const routes = (app)=>{
    app.use('/user',userRoutes)
    app.use('/auth',authRoutes)
    app.use('/category',categoryRoutes)
+   app.use('/question',questionRoutes)
 }
 
 export const initServer = () => {
