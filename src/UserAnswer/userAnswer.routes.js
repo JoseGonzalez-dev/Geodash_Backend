@@ -11,10 +11,10 @@ import { userAnswerValidator } from '../../middlewares/validators.js'
 
 const api = Router()
 
-// 🎮 RUTAS PÚBLICAS (sin JWT) - Experiencia limitada
-api.post('/guest', [limiter], createGuestAnswer)  // Respuesta de invitado
+// 🎮 RUTAS PÚBLICAS (sin JWT) - Experiencia limitada -> by IA
+api.post('/guest', [limiter], createGuestAnswer)  // Respuesta de invitado -> By IA
 
-// �� RUTAS PROTEGIDAS (con JWT) - Experiencia completa
+
 api.post('/create', [validateJwt, limiter, userAnswerValidator], createUserAnswer)
 api.get('/game/:gameId', [validateJwt], getUserAnswersByGame)
 api.get('/stats/:userId', [validateJwt], getUserAnswerStats)

@@ -2,9 +2,9 @@ import UserAnswer from './userAnswer.model.js'
 import Game from '../Game/game.model.js'
 import Question from '../Questions/question.model.js'
 
-// Agregar esta nueva función al controlador existente
+// Agregar esta nueva función al controlador existente -> by IA
 export const createGuestAnswer = async (req, res) => {
-    const data = req.body  // ← Mantener data
+    const data = req.body  // ← Mantener data -> By IA
     
     try {
         if (!data.guestGameId || !data.question || !data.selectedOption) {
@@ -14,8 +14,8 @@ export const createGuestAnswer = async (req, res) => {
             })
         }
         
-        // Verificar que la pregunta exista
-        const questionExists = await Question.findById(data.question)  // ← data.question
+        // Verificar que la pregunta exista -> By IA
+        const questionExists = await Question.findById(data.question)  // ← data.question -> By IA
         if (!questionExists) {
             return res.status(404).send({
                 success: false,
@@ -23,12 +23,12 @@ export const createGuestAnswer = async (req, res) => {
             })
         }
         
-        // 🎯 CALCULAR si la respuesta es correcta
-        const isCorrect = questionExists.correcto === data.selectedOption  // ← data.selectedOption
+        // 🎯 CALCULAR si la respuesta es correcta -> By IA
+        const isCorrect = questionExists.correcto === data.selectedOption  // ← data.selectedOption -> By IA
         
         // Contar respuestas existentes para este invitado
         const existingAnswers = await UserAnswer.countDocuments({ 
-            guestGameId: data.guestGameId,  // ← data.guestGameId
+            guestGameId: data.guestGameId,  // ← data.guestGameId -> By IA
             isGuest: true 
         })
         
@@ -40,11 +40,11 @@ export const createGuestAnswer = async (req, res) => {
             })
         }
         
-        // Crear respuesta de invitado con isCorrect calculado
+        // Crear respuesta de invitado con isCorrect calculado -> By IA
         const guestAnswer = await UserAnswer.create({
             question: data.question,
             selectedOption: data.selectedOption,
-            isCorrect,  // ← Usar el valor calculado
+            isCorrect,  // ← Usar el valor calculado -> By IA
             isGuest: true,
             guestGameId: data.guestGameId,
             responseTimeMs: data.responseTimeMs || 0
@@ -70,11 +70,10 @@ export const createGuestAnswer = async (req, res) => {
 }
 
 export const createUserAnswer = async (req, res) => {
-    const data = req.body  // ← Mantener data
+    const data = req.body 
     
     try {
-        // Validar que la partida exista
-        const gameExists = await Game.findById(data.game)  // ← data.game
+        const gameExists = await Game.findById(data.game)
         if (!gameExists) {
             return res.status(404).send({
                 success: false,
@@ -82,8 +81,7 @@ export const createUserAnswer = async (req, res) => {
             })
         }
         
-        // Validar que la pregunta exista
-        const questionExists = await Question.findById(data.question)  // ← data.question
+        const questionExists = await Question.findById(data.question)
         if (!questionExists) {
             return res.status(404).send({
                 success: false,
@@ -91,15 +89,12 @@ export const createUserAnswer = async (req, res) => {
             })
         }
         
-        // 🎯 CALCULAR si la respuesta es correcta
-        const isCorrect = questionExists.correcto === data.selectedOption  // ← data.selectedOption
-        
-        // Crear la respuesta del usuario con isCorrect calculado
+        const isCorrect = questionExists.correcto === data.selectedOption
         const userAnswer = await UserAnswer.create({
             game: data.game,
             question: data.question,
             selectedOption: data.selectedOption,
-            isCorrect,  // ← Usar el valor calculado
+            isCorrect, 
             responseTimeMs: data.responseTimeMs || 0
         })
         
@@ -153,13 +148,11 @@ export const getUserAnswerStats = async (req, res) => {
     const { userId } = req.params
     
     try {
-        // Obtener todas las respuestas del usuario
         const userGames = await Game.find({ user: userId })
         const gameIds = userGames.map(game => game._id)
         
         const answers = await UserAnswer.find({ game: { $in: gameIds } })
         
-        // Calcular estadísticas
         const totalAnswers = answers.length
         const correctAnswers = answers.filter(answer => answer.isCorrect).length
         const accuracy = totalAnswers > 0 ? (correctAnswers / totalAnswers * 100).toFixed(2) : 0

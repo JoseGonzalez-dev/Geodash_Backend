@@ -13,10 +13,10 @@ import { gameValidator, updateGameValidator } from '../../middlewares/validators
 
 const api = Router()
 
-// 🎮 RUTAS PÚBLICAS (sin JWT) - Experiencia limitada
-api.post('/guest', [limiter], createGuestGame)  // Crear partida de invitado
+// 🎮 RUTAS PÚBLICAS (sin JWT) - Experiencia limitada ->by IA
+api.post('/guest', [limiter], createGuestGame)  // Crear partida de invitado -> By IA
 
-// �� RUTAS PROTEGIDAS (con JWT) - Experiencia completa
+
 api.post('/', [validateJwt, isClient, limiter, gameValidator], createGame)
 api.get('/', [validateJwt, isAdmin], getGames)
 api.get('/:id', [validateJwt], getGameById)

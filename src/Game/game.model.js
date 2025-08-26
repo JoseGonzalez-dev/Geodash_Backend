@@ -5,7 +5,7 @@ const gameSchema = Schema(
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
-            required: function() { return !this.isGuest }, // Solo requerido si NO es invitado
+            required: function() { return !this.isGuest }, // Solo requerido si NO es invitado -> By IA
             index: true
         },
         category: {
@@ -37,19 +37,19 @@ const gameSchema = Schema(
             default: 0,
             min: [0, 'Time cannot be negative']
         },
-        // Nuevos campos para Guest
+        // Nuevos campos para Guest -> By IA
         isGuest: {
             type: Boolean,
             default: false
         },
         guestId: {
             type: String,
-            sparse: true, // Puede ser null para usuarios registrados
+            sparse: true, // Puede ser null para usuarios registrados -> By IA
             index: true
         },
         maxQuestions: {
             type: Number,
-            default: 510, // 5 para invitados, 510 para registrados
+            default: 510, // 5 para invitados, 510 para registrados -> By IA
             min: 5,
             max: 510
         }
@@ -61,7 +61,7 @@ const gameSchema = Schema(
 )
 
 gameSchema.index({ user: 1, category: 1, startDate: -1 })
-gameSchema.index({ guestId: 1, isGuest: 1 }) // Índice para invitados
+gameSchema.index({ guestId: 1, isGuest: 1 }) // Índice para invitados -> By IA
 
 gameSchema.methods.toJSON = function () {
     const { __v, ...game } = this.toObject()

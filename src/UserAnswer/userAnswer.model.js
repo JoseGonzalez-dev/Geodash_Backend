@@ -5,7 +5,7 @@ const userAnswerSchema = Schema(
         game: {
             type: Schema.Types.ObjectId,
             ref: 'Game',
-            required: function() { return !this.isGuest }, // Solo requerido si NO es invitado
+            required: function() { return !this.isGuest }, // Solo requerido si NO es invitado -> By IA
             index: true
         },
         question: {
@@ -24,14 +24,14 @@ const userAnswerSchema = Schema(
             type: Number,
             default: 0,
         },
-        // Nuevos campos para Guest
+        // Nuevos campos para Guest -> By IA
         isGuest: {
             type: Boolean,
             default: false
         },
         guestGameId: {
             type: String,
-            sparse: true, // Puede ser null para usuarios registrados
+            sparse: true, // Puede ser null para usuarios registrados -> By IA
             index: true
         }
     },
@@ -42,7 +42,7 @@ const userAnswerSchema = Schema(
 )
 
 userAnswerSchema.index({ game: 1, question: 1 }, { unique: true })
-userAnswerSchema.index({ guestGameId: 1, isGuest: 1 }) // Índice para invitados
+userAnswerSchema.index({ guestGameId: 1, isGuest: 1 }) // Índice para invitados -> By IA
 
 userAnswerSchema.methods.toJSON = function () {
     const { __v, ...userAnswer } = this.toObject()
