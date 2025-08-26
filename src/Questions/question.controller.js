@@ -1,6 +1,45 @@
 import Pregunta from './question.model.js'
 
-// Agregar esta función al controlador
+// Agregar esta nueva función al controlador existente (NO tocar las existentes)
+export const getQuestionsForGuest = async (req, res) => {
+  try {
+      const { category, limit = 5 } = req.query
+      
+      if (!category) {
+          return res.status(400).send({
+              success: false,
+              message: 'La categoría es requerida'
+          })
+      }
+      
+      // Solo 5 preguntas para invitados
+      const questions = await Pregunta.find({ id_categoria: category })
+          .limit(parseInt(limit))
+          .sort({ createdAt: -1 })
+      
+      if (questions.length === 0) {
+          return res.status(404).send({
+              success: false,
+              message: 'No se encontraron preguntas para esta categoría'
+          })
+      }
+      
+      return res.status(200).send({
+          success: true,
+          message: `Preguntas obtenidas (${questions.length} de 5 para invitados)`,
+          data: questions,
+          upgradeMessage: 'Regístrate para acceder a todas las preguntas!'
+      })
+      
+  } catch (err) {
+      console.error(err)
+      return res.status(500).send({
+          success: false,
+          message: 'Error al obtener preguntas para invitados',
+          err: err.message
+      })
+  }
+}
 
 // Crear una nueva pregunta
 export const createPregunta = async (req, res) => {

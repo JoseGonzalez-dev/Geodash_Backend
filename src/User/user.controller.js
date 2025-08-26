@@ -4,6 +4,86 @@ import { join} from 'path'
 import { unlink } from 'fs/promises'
 import { serialize } from "v8";
 
+// Agregar esta nueva función al controlador existente (NO tocar las existentes)
+export const migrateGuestToUser = async (req, res) => {
+    try {
+        const { guestId, email, username, password, name, surname } = req.body
+        
+        // Verificar que el usuario no exista
+        const existingUser = await User.findOne({ 
+            $or: [{ email }, { username }] 
+        })
+        
+        if (existingUser) {
+            return res.status(400).send({
+                success: false,
+                message: 'El email o username ya están en uso'
+            })
+        }
+        
+        // Crear nuevo usuario
+        const newUser = await User.create({
+            email,
+            username,
+            password,
+            name,
+            surname,
+            role: 'CLIENT'
+        })
+        
+        // Migrar partidas de invitado
+        const guestGames = await Game.find({ guestId, isGuest: true })
+        if (guestGames.length > 0) {
+            await Game.updateMany(
+                { guestId, isGuest: true },
+                { 
+                    user: newUser._id, 
+                    isGuest: false, 
+                    guestId: null,
+                    maxQuestions: 510
+                }
+            )
+        }
+        
+        // Migrar respuestas de invitado
+        const guestAnswers = await UserAnswer.find({ 
+            guestGameId: { $in: guestGames.map(g => g._id) },
+            isGuest: true 
+        })
+        
+        if (guestAnswers.length > 0) {
+            await UserAnswer.updateMany(
+                { 
+                    guestGameId: { $in: guestGames.map(g => g._id) },
+                    isGuest: true 
+                },
+                { 
+                    game: { $set: guestGames.map(g => g._id) },
+                    isGuest: false,
+                    guestGameId: null
+                }
+            )
+        }
+        
+        res.status(201).send({
+            success: true,
+            message: 'Usuario creado y progreso migrado correctamente',
+            data: {
+                user: newUser,
+                migratedGames: guestGames.length,
+                migratedAnswers: guestAnswers.length
+            }
+        })
+        
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Error al migrar invitado a usuario',
+            error: e.message
+        })
+    }
+}
+
 const addAdmin = async () => {
     try {
         const defaultAdmin = await User.findOne({role: 'ADMIN'})

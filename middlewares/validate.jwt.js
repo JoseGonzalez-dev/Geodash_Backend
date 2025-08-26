@@ -63,3 +63,20 @@ export const isNotClient =async(req,res,next)=>{
     }
 }
 
+const isAdminOrClient = async (req, res, next) => {
+  try {
+      const { user } = req
+      if (!user || (user.role !== 'ADMIN' && user.role !== 'CLIENT')) {
+          return res.status(403).send({
+              success: false,
+              message: 'Solo ADMIN o CLIENT pueden crear respuestas'
+          })
+      }
+      next()
+  } catch (error) {
+      return res.status(401).send({
+          success: false,
+          message: 'Error con la autorización'
+      })
+  }
+}

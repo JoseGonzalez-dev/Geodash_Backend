@@ -8,6 +8,7 @@ import authRoutes from '../src/Auth/auth.routes.js'
 import categoryRoutes from '../src/Category/category.routes.js'
 import questionRoutes from '../src/Questions/question.routes.js'
 import gameRoutes from '../src/Game/game.routes.js'
+import userAnswerRoutes from '../src/UserAnswer/userAnswer.routes.js'
 
 const config = (app) => {
     app.use(helmet())
@@ -24,6 +25,7 @@ const routes = (app)=>{
    app.use('/category',categoryRoutes)
    app.use('/question',questionRoutes)
    app.use('/v1/geobash/game', gameRoutes)
+   app.use('/v1/geobash/user_Answer', userAnswerRoutes)
 }
 
 export const initServer = () => {

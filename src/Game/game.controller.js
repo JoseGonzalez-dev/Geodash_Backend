@@ -2,6 +2,54 @@ import Game from './game.model.js'
 import User from '../User/user.model.js'
 import Category from '../Category/category.model.js'
 
+// Agregar esta nueva función al controlador existente
+export const createGuestGame = async (req, res) => {
+    try {
+        const { category } = req.body
+        
+        if (!category) {
+            return res.status(400).send({
+                success: false,
+                message: 'La categoría es requerida',
+                data: null
+            })
+        }
+        
+        // Verificar que la categoría exista
+        const categoryExists = await Category.findById(category)
+        if (!categoryExists) {
+            return res.status(404).send({
+                success: false,
+                message: 'Categoría no encontrada',
+                data: null
+            })
+        }
+        
+        // Crear partida de invitado
+        const guestGame = await Game.create({
+            category,
+            isGuest: true,
+            guestId: `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            maxQuestions: 5,
+            startDate: new Date()
+        })
+        
+        res.status(201).send({
+            success: true,
+            message: 'Partida de invitado iniciada (máximo 5 preguntas)',
+            data: guestGame,
+            upgradeMessage: 'Regístrate para jugar las 510 preguntas completas y guardar tu progreso!'
+        })
+        
+    } catch (e) {
+        res.status(500).send({
+            success: false,
+            message: 'Error al iniciar partida de invitado',
+            error: e.message
+        })
+    }
+}
+
 export const createGame = async (req, res) => {
     const data = req.body
     try {

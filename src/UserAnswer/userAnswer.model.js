@@ -5,28 +5,34 @@ const userAnswerSchema = Schema(
         game: {
             type: Schema.Types.ObjectId,
             ref: 'Game',
-            required: [true, 'Game is required'],
+            required: function() { return !this.isGuest }, // Solo requerido si NO es invitado
             index: true
         },
         question: {
             type: Schema.Types.ObjectId,
             ref: 'Question',
-            required: [true, 'Question is required'],
             index: true
         },
         selectedOption: {
             type: String,
-            required: [true, 'Selected option is required']
         },
         isCorrect: {
             type: Boolean,
-            required: true,
             default: false
         },
         responseTimeMs: {
             type: Number,
             default: 0,
-            min: [0, 'Time cannot be negative']
+        },
+        // Nuevos campos para Guest
+        isGuest: {
+            type: Boolean,
+            default: false
+        },
+        guestGameId: {
+            type: String,
+            sparse: true, // Puede ser null para usuarios registrados
+            index: true
         }
     },
     { 
@@ -36,6 +42,7 @@ const userAnswerSchema = Schema(
 )
 
 userAnswerSchema.index({ game: 1, question: 1 }, { unique: true })
+userAnswerSchema.index({ guestGameId: 1, isGuest: 1 }) // Índice para invitados
 
 userAnswerSchema.methods.toJSON = function () {
     const { __v, ...userAnswer } = this.toObject()
