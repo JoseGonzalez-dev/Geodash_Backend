@@ -1,8 +1,8 @@
 import { body } from "express-validator";
 import { existCategory, existsEmail,existsUser,} from "../utils/db.validators.js";
 import { validateErrors,validateErrorsGeneral, validateErrorsWhitoutFiles } from "./validate.errors.js";
-import Respuesta from "../OpQuestions/opcion.model.js";
-import Pregunta from "../Questions/question.model.js";
+import Respuesta from "../src/OpQuestions/opcion.model.js";
+import Pregunta from "../src/Questions/question.model.js";
 
 export const isMyProfile=async(req,res,next)=>{
     try {
