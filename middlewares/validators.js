@@ -1,6 +1,8 @@
 import { body } from "express-validator";
 import { existCategory, existsEmail,existsUser,} from "../utils/db.validators.js";
 import { validateErrors,validateErrorsGeneral, validateErrorsWhitoutFiles } from "./validate.errors.js";
+import Respuesta from "../OpQuestions/opcion.model.js";
+import Pregunta from "../Questions/question.model.js";
 export const isMyProfile=async(req,res,next)=>{
     try {
         let {id} = req.params
@@ -54,5 +56,108 @@ export const categoryValidator=[
 export const updateCategoryValidator=[
     body('name').optional().notEmpty().custom((category,{req})=>existCategory(category,{_id:req.params.id})),
     body('description').optional().notEmpty().isLength({min:3,max:50}),
+    validateErrors
+]
+
+// Validations for questions
+export const questionValidator = [
+    body("texto", "El texto de la pregunta es requerido")
+        .notEmpty()
+        .isLength({ min: 5, max: 500 }),
+
+    body("id_categoria", "La categoría es requerida")
+        .notEmpty()
+        .isMongoId()
+        .custom(existCategory),
+
+    body("dificultad", "La dificultad es requerida")
+        .notEmpty()
+        .isIn(["Fácil", "Medio", "Difícil"]),
+
+    body("correcto", "La respuesta correcta es requerida")
+        .notEmpty()
+        .isLength({ min: 1, max: 200 }),
+
+    body("explicacion")
+        .optional()
+        .isLength({ max: 1000 }),
+
+    validateErrors
+]
+
+
+// Validations for updating questions
+export const updateQuestionValidator = [
+    body("texto")
+        .optional()
+        .notEmpty()
+        .isLength({ min: 5, max: 500 }),
+
+    body("id_categoria")
+        .optional()
+        .isMongoId()
+        .custom(existCategory),
+
+    body("dificultad")
+        .optional()
+        .isIn(["Fácil", "Medio", "Difícil"]),
+
+    body("correcto")
+        .optional()
+        .notEmpty()
+        .isLength({ min: 1, max: 200 }),
+
+    body("explicacion")
+        .optional()
+        .isLength({ max: 1000 }),
+
+    validateErrors
+]
+
+// Validar que la pregunta exista
+const existPreguntaById = async (id) => {
+    const pregunta = await Pregunta.findById(id)
+    if (!pregunta) {
+        console.error(`Pregunta con id ${id} no existe`)
+        throw new Error(`Pregunta con id ${id} no existe`)
+    }
+}
+
+// Crear respuesta
+export const respuestaValidator = [
+    body("id_pregunta", "La pregunta es requerida")
+        .notEmpty()
+        .isMongoId()
+        .custom(existPreguntaById),
+
+    body("texto_respuestas", "Debe haber al menos 2 opciones de respuesta")
+        .isArray({ min: 2 })
+        .custom((arr) => arr.every(opcion => typeof opcion === "string" && opcion.length >= 1 && opcion.length <= 200)),
+
+    body("opcion_correcta", "Debe especificar la respuesta correcta")
+        .notEmpty()
+        .isString()
+        .custom((val, { req }) => req.body.texto_respuestas.includes(val)),
+
+    validateErrors
+]
+
+// Validar respuesta enviada por usuario
+export const validarRespuestaValidator = [
+    body("id_pregunta", "La pregunta es requerida")
+        .notEmpty()
+        .isMongoId()
+        .custom(existPreguntaById),
+
+    body("opcionElegida", "La opción elegida es requerida")
+        .notEmpty()
+        .isString()
+        .custom(async (val, { req }) => {
+            const respuesta = await Respuesta.findOne({ id_pregunta: req.body.id_pregunta })
+            if (!respuesta) throw new Error("No hay respuestas registradas para esta pregunta")
+            if (!respuesta.texto_respuestas.includes(val)) throw new Error("La opción elegida no es válida")
+            return true
+        }),
+
     validateErrors
 ]

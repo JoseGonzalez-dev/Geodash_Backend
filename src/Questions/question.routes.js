@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import { questionValidator, updateQuestionValidator } from '../../middlewares/validators.js'
 import { 
   getAllPreguntas, 
   getPreguntaById, 
