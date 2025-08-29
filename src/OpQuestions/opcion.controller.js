@@ -1,4 +1,4 @@
-import Pregunta from './question.model.js'
+import Pregunta from '../Questions/question.model.js'
 import Respuesta from './opcion.model.js'
 
 //Traer preguntas con sus opciones (SIN mostrar la correcta)

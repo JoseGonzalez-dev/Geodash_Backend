@@ -9,6 +9,8 @@ import categoryRoutes from '../src/Category/category.routes.js'
 import questionRoutes from '../src/Questions/question.routes.js'
 import gameRoutes from '../src/Game/game.routes.js'
 import userAnswerRoutes from '../src/UserAnswer/userAnswer.routes.js'
+import streakRoutes from '../src/Streak/streak.routes.js'
+import optionAnswers from '../src/OpQuestions/opcion.routes.js'
 
 const config = (app) => {
     app.use(helmet())
@@ -20,12 +22,14 @@ const config = (app) => {
 }
 
 const routes = (app)=>{ 
-   app.use('/user',userRoutes)
-   app.use('/auth',authRoutes)
-   app.use('/category',categoryRoutes)
-   app.use('/question',questionRoutes)
-   app.use('/v1/geobash/game', gameRoutes)
-   app.use('/v1/geobash/user_Answer', userAnswerRoutes)
+   app.use('api/v1/geobash/user',userRoutes)
+   app.use('api/v1/geobash/auth',authRoutes)
+   app.use('api/v1/geobash/category',categoryRoutes)
+   app.use('api/v1/geobash/question',questionRoutes)
+   app.use('api/v1/geobash/answers', optionAnswers)
+   app.use('api/v1/geobash/game', gameRoutes)
+   app.use('api/v1/geobash/user_Answer', userAnswerRoutes)
+   app.use('api/v1/geobash/streak', streakRoutes)
 }
 
 export const initServer = () => {

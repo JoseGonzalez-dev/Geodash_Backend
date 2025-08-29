@@ -1,6 +1,7 @@
 import Game from './game.model.js'
 import User from '../User/user.model.js'
 import Category from '../Category/category.model.js'
+import Streak from '../Streak/streak.model.js'
 
 // Agregar esta nueva función al controlador existente
 export const createGuestGame = async (req, res) => {
@@ -189,6 +190,36 @@ export const updateGame = async (req, res) => {
                 data: null
             }
         )
+        
+        // Si la partida se completó (tiene endDate), actualizar la racha del usuario
+        if (endDate && game.user && !game.isGuest) {
+            try {
+                let userStreak = await Streak.findOne({ user: game.user })
+                
+                if (!userStreak) {
+                    userStreak = new Streak({ user: game.user })
+                }
+                
+                // Actualizar la racha con la fecha de finalización
+                userStreak.updateStreak(new Date(endDate))
+                await userStreak.save()
+                
+                // Agregar información de racha a la respuesta
+                const streakStats = userStreak.getStreakStats()
+                return res.status(200).send(
+                    {
+                        success: true,
+                        message: 'Partida actualizada correctamente y racha actualizada',
+                        data: game,
+                        streak: streakStats
+                    }
+                )
+            } catch (streakError) {
+                console.error('Error updating streak:', streakError)
+                // Continuar con la respuesta normal si hay error en la racha
+            }
+        }
+        
         return res.status(200).send(
             {
                 success: true,

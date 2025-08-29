@@ -213,3 +213,13 @@ export const validarRespuestaValidator = [
 
     validateErrors
 ]
+
+//-------------------------------------------- Streak Validators --------------------------------------------
+
+export const updateStreakValidator = [
+    body('gameDate')
+        .optional()
+        .isISO8601().withMessage('La fecha del juego debe tener un formato válido (ISO 8601)')
+        .toDate(),
+    validateErrors
+]
