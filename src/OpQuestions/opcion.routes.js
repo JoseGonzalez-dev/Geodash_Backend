@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { respuestaValidator, validarRespuestaValidator } from "../middlewares/validators.js"
+import { respuestaValidator, validarRespuestaValidator } from "../../middlewares/validators.js"
 import {
   getPreguntasConOpciones,
   validarRespuesta
