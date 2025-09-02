@@ -22,14 +22,14 @@ const config = (app) => {
 }
 
 const routes = (app)=>{ 
-   app.use('api/v1/geobash/user',userRoutes)
-   app.use('api/v1/geobash/auth',authRoutes)
-   app.use('api/v1/geobash/category',categoryRoutes)
-   app.use('api/v1/geobash/question',questionRoutes)
-   app.use('api/v1/geobash/answers', optionAnswers)
-   app.use('api/v1/geobash/game', gameRoutes)
-   app.use('api/v1/geobash/user_Answer', userAnswerRoutes)
-   app.use('api/v1/geobash/streak', streakRoutes)
+   app.use('/api/v1/geobash/user',userRoutes)
+   app.use('/api/v1/geobash/auth',authRoutes)
+   app.use('/api/v1/geobash/category',categoryRoutes)
+   app.use('/api/v1/geobash/question',questionRoutes)
+   app.use('/api/v1/geobash/answers', optionAnswers)
+   app.use('/api/v1/geobash/game', gameRoutes)
+   app.use('/api/v1/geobash/user_Answer', userAnswerRoutes)
+   app.use('/api/v1/geobash/streak', streakRoutes)
 }
 
 export const initServer = () => {

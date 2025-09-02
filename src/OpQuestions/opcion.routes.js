@@ -1,11 +1,15 @@
 import { Router } from 'express'
 import { respuestaValidator, validarRespuestaValidator } from "../../middlewares/validators.js"
 import {
+  createRespuesta,
   getPreguntasConOpciones,
   validarRespuesta
 } from './opcion.controller.js'
 
 const router = Router()
+
+// Crear opciones de respuesta para una pregunta
+router.post('/', respuestaValidator, createRespuesta)
 
 // Traer todas las preguntas con opciones (sin la correcta)
 router.get('/preguntas-con-opciones', getPreguntasConOpciones)

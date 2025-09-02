@@ -3,6 +3,7 @@ import { checkPassword, encrypt } from "../../utils/encrypt.js";
 import { join} from 'path'
 import { unlink } from 'fs/promises'
 import { serialize } from "v8";
+import mongoose from "mongoose";
 
 // Agregar esta nueva función al controlador existente (NO tocar las existentes)
 export const migrateGuestToUser = async (req, res) => {
@@ -105,7 +106,10 @@ const addAdmin = async () => {
     }
 }
  
-addAdmin()
+// Ejecutar addAdmin después de que la conexión esté lista
+mongoose.connection.once('open', () => {
+    addAdmin()
+})
 
 export const addUser = async(req,res)=>{
     try {
