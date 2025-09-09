@@ -13,6 +13,7 @@ import streakRoutes from '../src/Streak/streak.routes.js'
 import optionAnswers from '../src/OpQuestions/opcion.routes.js'
 
 const config = (app) => {
+    app.set('trust proxy', 1)
     app.use(helmet())
     app.use(cors(
         {
