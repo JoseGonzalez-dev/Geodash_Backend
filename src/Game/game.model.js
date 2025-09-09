@@ -8,11 +8,10 @@ const gameSchema = Schema(
             required: function() { return !this.isGuest }, // Solo requerido si NO es invitado -> By IA
             index: true
         },
-        category: {
-            type: Schema.Types.ObjectId,
-            ref: 'Category',
-            required: [true, 'Category is required'],
-            index: true
+        difficulty: {
+            type: String,
+            enum: ['Fácil', 'Medio', 'Difícil'],
+            required: [true, 'Difficulty is required']
         },
         startDate: {
             type: Date,
