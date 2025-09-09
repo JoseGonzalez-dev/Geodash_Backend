@@ -17,7 +17,7 @@ const api = Router()
 api.post('/guest', [limiter], createGuestGame)  // Crear partida de invitado -> By IA
 
 
-api.post('/', [validateJwt, isClient, limiter, gameValidator], createGame)
+api.post('/', [validateJwt, limiter, gameValidator], createGame)
 api.get('/', [validateJwt, isAdmin], getGames)
 api.get('/:id', [validateJwt], getGameById)
 api.patch('/:id', [validateJwt, updateGameValidator], updateGame)
