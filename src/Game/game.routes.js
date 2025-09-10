@@ -20,7 +20,7 @@ api.post('/guest', [limiter, guestGameValidator], createGuestGame)  // Crear par
 api.post('/', [validateJwt, limiter, gameValidator], createGame)
 api.get('/', [validateJwt, isAdmin], getGames)
 api.get('/:id', [validateJwt], getGameById)
-api.patch('/:id', [validateJwt, updateGameValidator], updateGame)
+api.put('/:id', [validateJwt, updateGameValidator], updateGame)
 api.get('/user/:userId', [validateJwt], getUserGames)
 
 export default api
