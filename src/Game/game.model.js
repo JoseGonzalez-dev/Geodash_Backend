@@ -59,7 +59,7 @@ const gameSchema = Schema(
     }
 )
 
-gameSchema.index({ user: 1, category: 1, startDate: -1 })
+gameSchema.index({ user: 1, difficulty: 1, startDate: -1 })
 gameSchema.index({ guestId: 1, isGuest: 1 }) // Índice para invitados -> By IA
 
 gameSchema.methods.toJSON = function () {

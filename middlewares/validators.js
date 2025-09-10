@@ -67,9 +67,16 @@ export const gameValidator = [
     body('user')
         .notEmpty().withMessage('El ID del usuario es requerido')
         .isMongoId().withMessage('El ID del usuario debe ser un ID válido de MongoDB'),
-    body('category')
-        .notEmpty().withMessage('El ID de la categoría es requerido')
-        .isMongoId().withMessage('El ID de la categoría debe ser un ID válido de MongoDB'),
+    body('difficulty')
+        .notEmpty().withMessage('La dificultad es requerida')
+        .isIn(['Fácil', 'Medio', 'Difícil']).withMessage('La dificultad debe ser: Fácil, Medio o Difícil'),
+    validateErrors
+]
+
+export const guestGameValidator = [
+    body('difficulty')
+        .notEmpty().withMessage('La dificultad es requerida')
+        .isIn(['Fácil', 'Medio', 'Difícil']).withMessage('La dificultad debe ser: Fácil, Medio o Difícil'),
     validateErrors
 ]
 

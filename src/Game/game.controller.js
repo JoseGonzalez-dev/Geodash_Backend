@@ -1,6 +1,5 @@
 import Game from './game.model.js'
 import User from '../User/user.model.js'
-import Category from '../Category/category.model.js'
 import Streak from '../Streak/streak.model.js'
 
 // Agregar esta nueva función al controlador existente
@@ -79,7 +78,7 @@ export const createGame = async (req, res) => {
     }
 }
 
-export const getGames = async (req, res) => {
+export const getGames = async (_req, res) => {
     try {
         const games = await Game.find()
             .populate(

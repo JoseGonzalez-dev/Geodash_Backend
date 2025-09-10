@@ -9,12 +9,12 @@ import {
 } from './game.controller.js'
 import { validateJwt, isClient, isAdmin } from '../../middlewares/validate.jwt.js'
 import { limiter } from '../../middlewares/rate.limit.js'
-import { gameValidator, updateGameValidator } from '../../middlewares/validators.js'
+import { gameValidator, guestGameValidator, updateGameValidator } from '../../middlewares/validators.js'
 
 const api = Router()
 
 // 🎮 RUTAS PÚBLICAS (sin JWT) - Experiencia limitada ->by IA
-api.post('/guest', [limiter], createGuestGame)  // Crear partida de invitado -> By IA
+api.post('/guest', [limiter, guestGameValidator], createGuestGame)  // Crear partida de invitado -> By IA
 
 
 api.post('/', [validateJwt, limiter, gameValidator], createGame)
