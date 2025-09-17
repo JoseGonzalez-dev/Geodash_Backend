@@ -1,47 +1,36 @@
 import Game from './game.model.js'
 import User from '../User/user.model.js'
-import Category from '../Category/category.model.js'
 import Streak from '../Streak/streak.model.js'
 
 // Agregar esta nueva función al controlador existente
 export const createGuestGame = async (req, res) => {
     try {
-        const { category } = req.body
-        
-        if (!category) {
+        const { difficulty } = req.body
+
+        if (!difficulty) {
             return res.status(400).send({
                 success: false,
-                message: 'La categoría es requerida',
+                message: 'La dificultad es requerida',
                 data: null
             })
         }
-        
-        // Verificar que la categoría exista
-        const categoryExists = await Category.findById(category)
-        if (!categoryExists) {
-            return res.status(404).send({
-                success: false,
-                message: 'Categoría no encontrada',
-                data: null
-            })
-        }
-        
+
         // Crear partida de invitado
         const guestGame = await Game.create({
-            category,
+            difficulty,
             isGuest: true,
             guestId: `guest_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             maxQuestions: 5,
             startDate: new Date()
         })
-        
+
         res.status(201).send({
             success: true,
             message: 'Partida de invitado iniciada (máximo 5 preguntas)',
             data: guestGame,
             upgradeMessage: 'Regístrate para jugar las 510 preguntas completas y guardar tu progreso!'
         })
-        
+
     } catch (e) {
         res.status(500).send({
             success: false,
@@ -54,10 +43,10 @@ export const createGuestGame = async (req, res) => {
 export const createGame = async (req, res) => {
     const data = req.body
     try {
-        if (!data.user || !data.category) return res.status(400).send(
+        if (!data.user || !data.difficulty) return res.status(400).send(
             {
                 success: false,
-                message: 'Usuario y categoría son requeridos',
+                message: 'Usuario y dificultad son requeridos',
                 data: null
             }
         )
@@ -66,14 +55,6 @@ export const createGame = async (req, res) => {
             {
                 success: false,
                 message: 'Usuario no encontrado',
-                data: null
-            }
-        )
-        const category = await Category.findById(data.category)
-        if (!category) return res.status(404).send(
-            {
-                success: false,
-                message: 'Categoría no encontrada',
                 data: null
             }
         )
@@ -97,26 +78,20 @@ export const createGame = async (req, res) => {
     }
 }
 
-export const getGames = async (req, res) => {
+export const getGames = async (_req, res) => {
     try {
         const games = await Game.find()
             .populate(
-                [
-                    {
-                        path: 'user',
-                        select: 'name -_id'
-                    },
-                    {
-                        path: 'category',
-                        select: 'name -_id'
-                    }
-                ]
+                {
+                    path: 'user',
+                    select: 'name -_id'
+                }
             )
-            if(!games?.length) return res.status(404).send({
-                success: false,
-                message: 'No se encontraron partidas',
-                data: "NA"
-            })
+        if (!games?.length) return res.status(404).send({
+            success: false,
+            message: 'No se encontraron partidas',
+            data: "NA"
+        })
         return res.status(200).send(
             {
                 success: true,
@@ -140,22 +115,16 @@ export const getGameById = async (req, res) => {
     try {
         const game = await Game.findById(id)
             .populate(
-                [
-                    {
-                        path: 'user',
-                        select: 'name -_id'
-                    },
-                    {
-                        path: 'category',
-                        select: 'name -_id'
-                    }
-                ]
+                {
+                    path: 'user',
+                    select: 'name -_id'
+                }
             )
-            if(!game) return res.status(404).send({
-                success: false,
-                message: 'No se encontraron partidas',
-                data: "NA"
-            })
+        if (!game) return res.status(404).send({
+            success: false,
+            message: 'No se encontraron partidas',
+            data: "NA"
+        })
         return res.status(200).send(
             {
                 success: true,
@@ -183,27 +152,27 @@ export const updateGame = async (req, res) => {
     )
     try {
         const game = await Game.findByIdAndUpdate(id, cleanData, { new: true })
-        if(!game) return res.status(404).send(
+        if (!game) return res.status(404).send(
             {
                 success: false,
                 message: 'Partida no encontrada',
                 data: null
             }
         )
-        
+
         // Si la partida se completó (tiene endDate), actualizar la racha del usuario
         if (endDate && game.user && !game.isGuest) {
             try {
                 let userStreak = await Streak.findOne({ user: game.user })
-                
+
                 if (!userStreak) {
                     userStreak = new Streak({ user: game.user })
                 }
-                
+
                 // Actualizar la racha con la fecha de finalización
                 userStreak.updateStreak(new Date(endDate))
                 await userStreak.save()
-                
+
                 // Agregar información de racha a la respuesta
                 const streakStats = userStreak.getStreakStats()
                 return res.status(200).send(
@@ -219,7 +188,7 @@ export const updateGame = async (req, res) => {
                 // Continuar con la respuesta normal si hay error en la racha
             }
         }
-        
+
         return res.status(200).send(
             {
                 success: true,
@@ -243,25 +212,19 @@ export const getUserGames = async (req, res) => {
     try {
         const games = await Game.find({ user: userId })
             .populate(
-                [
-                    {
-                        path: 'user',
-                        select: 'name -_id'
-                    },
-                    {
-                        path: 'category',
-                        select: 'name -_id'
-                    }
-                ]
+                {
+                    path: 'user',
+                    select: 'name -_id'
+                }
             )
             .sort({ startDate: -1 })
 
-            if(!games?.length) return res.status(404).send({
-                success: false,
-                message: 'No se encontraron partidas',
-                data: "NA"
-            })
-        
+        if (!games?.length) return res.status(404).send({
+            success: false,
+            message: 'No se encontraron partidas',
+            data: "NA"
+        })
+
         return res.status(200).send({
             success: true,
             message: 'Partidas del usuario obtenidas correctamente',

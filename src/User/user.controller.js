@@ -2,7 +2,8 @@ import User from "./user.model.js";
 import { checkPassword, encrypt } from "../../utils/encrypt.js";
 import { join} from 'path'
 import { unlink } from 'fs/promises'
-import { serialize } from "v8";
+import Game from "../Game/game.model.js";
+import mongoose from "mongoose";
 
 // Agregar esta nueva función al controlador existente (NO tocar las existentes)
 export const migrateGuestToUser = async (req, res) => {
@@ -105,7 +106,10 @@ const addAdmin = async () => {
     }
 }
  
-addAdmin()
+// Ejecutar addAdmin después de que la conexión esté lista
+mongoose.connection.once('open', () => {
+    addAdmin()
+})
 
 export const addUser = async(req,res)=>{
     try {
@@ -286,3 +290,45 @@ export const changeProfilePicture = async(req,res,error)=>{
         return res.status(500).send({success:false,message:'General error searching the user'})
     }
  }
+
+
+export const myProfile = async(req, res) => {
+    const { uid } = req.user
+    try {
+        const user = await User.findById(uid).select('-password -__v -role');
+        if (!user) {
+            return res.status(404).send({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        const games = await Game.find({ user: uid, isGuest: false }).select('difficulty correctAnswers')
+
+        const easyGames = games.filter(game => game.difficulty === 'Fácil')
+        const mediumGames = games.filter(game => game.difficulty === 'Medio')
+        const hardGames = games.filter(game => game.difficulty === 'Difícil')
+
+        const easyTrhophy = easyGames.length > 0 ? easyGames.reduce((sum, game) => sum + game.correctAnswers, 0) : 0
+        const mediumTrhophy = mediumGames.length > 0 ? mediumGames.reduce((sum, game) => sum + game.correctAnswers, 0) : 0
+        const hardTrhophy = hardGames.length > 0 ? hardGames.reduce((sum, game) => sum + game.correctAnswers, 0) : 0
+
+        return res.status(200).send(
+            { 
+                success: true, 
+                message: "User profile retrieved successfully",
+                data: { 
+                    user,
+                    trophies: {
+                        easy: easyTrhophy,
+                        medium: mediumTrhophy,
+                        hard: hardTrhophy,
+                    }
+                }
+            }
+        )
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send({ success: false, message: 'General error retrieving profile' });
+    }
+}

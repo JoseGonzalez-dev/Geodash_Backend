@@ -6,7 +6,14 @@ import { addCategory, deleteCategory, findCategory, listCategories, updateCatego
 
 const api = Router()
 
+// Ruta simple para crear categoría (para el script de poblado)
+api.post('/', categoryValidator, addCategory)
+
+// Rutas protegidas existentes
 api.post('/category-register', [validateJwt,isAdmin, categoryValidator],addCategory)
+
+// Ruta simple para listar categorías (para el script de poblado)
+api.get('/', listCategories)
 
 api.get('/category-list', listCategories)
 api.get('/:id', findCategory)

@@ -8,11 +8,10 @@ const gameSchema = Schema(
             required: function() { return !this.isGuest }, // Solo requerido si NO es invitado -> By IA
             index: true
         },
-        category: {
-            type: Schema.Types.ObjectId,
-            ref: 'Category',
-            required: [true, 'Category is required'],
-            index: true
+        difficulty: {
+            type: String,
+            enum: ['Fácil', 'Medio', 'Difícil'],
+            required: [true, 'Difficulty is required']
         },
         startDate: {
             type: Date,
@@ -60,7 +59,7 @@ const gameSchema = Schema(
     }
 )
 
-gameSchema.index({ user: 1, category: 1, startDate: -1 })
+gameSchema.index({ user: 1, difficulty: 1, startDate: -1 })
 gameSchema.index({ guestId: 1, isGuest: 1 }) // Índice para invitados -> By IA
 
 gameSchema.methods.toJSON = function () {

@@ -25,7 +25,7 @@ export const connectDB = async () => {
         process.env.MONGO_URI,
         {
             maxPoolSize: 50,
-            serverSelectionTimeoutMS: 5000
+            serverSelectionTimeoutMS: 10000
         }
     )
     } catch (error) {

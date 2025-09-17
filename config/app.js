@@ -13,8 +13,16 @@ import streakRoutes from '../src/Streak/streak.routes.js'
 import optionAnswers from '../src/OpQuestions/opcion.routes.js'
 
 const config = (app) => {
+    app.set('trust proxy', 1)
     app.use(helmet())
-    app.use(cors())
+    app.use(cors(
+        {
+            origin: "*",
+            methods: ["GET", "POST", "PUT", "DELETE"],
+            allowedHeaders: ["Content-Type", "Authorization"],
+            credentials: true
+        }
+    ))
     app.use(morgan("dev"))
     app.use(express.json())
     app.use(express.urlencoded({ extended: false }))
@@ -22,14 +30,14 @@ const config = (app) => {
 }
 
 const routes = (app)=>{ 
-   app.use('api/v1/geobash/user',userRoutes)
-   app.use('api/v1/geobash/auth',authRoutes)
-   app.use('api/v1/geobash/category',categoryRoutes)
-   app.use('api/v1/geobash/question',questionRoutes)
-   app.use('api/v1/geobash/answers', optionAnswers)
-   app.use('api/v1/geobash/game', gameRoutes)
-   app.use('api/v1/geobash/user_Answer', userAnswerRoutes)
-   app.use('api/v1/geobash/streak', streakRoutes)
+   app.use('/api/v1/geobash/user',userRoutes)
+   app.use('/api/v1/geobash/auth',authRoutes)
+   app.use('/api/v1/geobash/category',categoryRoutes)
+   app.use('/api/v1/geobash/question',questionRoutes)
+   app.use('/api/v1/geobash/answers', optionAnswers)
+   app.use('/api/v1/geobash/game', gameRoutes)
+   app.use('/api/v1/geobash/user_Answer', userAnswerRoutes)
+   app.use('/api/v1/geobash/streak', streakRoutes)
 }
 
 export const initServer = () => {
