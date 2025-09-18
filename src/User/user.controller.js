@@ -92,9 +92,9 @@ const addAdmin = async () => {
         const usuarioAdmin = new User({
                 name: 'Jared',
                 surname: 'Morataya',
-                username: `${process.env.ADMIN_USER}`,
-                email: `${process.env.ADMIN_EMAIL}`,
-                password: await encrypt(`${process.env.ADMIN_PASSWORD}`),
+                username: 'jmorataya',
+                email: 'jmorataya@gmail.com',
+                password: 'Jmorataya-123',
                 role: "ADMIN",
                 date: Date.now(),
             })
@@ -157,8 +157,6 @@ export const updateUser = async(req,res)=>{
             surname:data.surname,
             email:data.email,
             username:data.username,
-            phone:data.phone,
-            address:data.address
         },{new:true})
         if(!user) return res.status(404).send({success:false,message:'User not found'})
         return res.send({success:true,message:'User updated successfully'})
@@ -173,23 +171,11 @@ export const deleteUser = async(req,res)=>{
         let{id} = req.params
         let user = await User.findById(id)
         if(!user) return res.status(404).send({success:false,message: 'User not found'})
-        await deleteUserPhotos(user.profilePicture,req.filePath)
         await User.findByIdAndDelete(id)
         return res.send({success:true,message:'User deleted successfully'})
     }catch(e){
         console.error(e)
         return res.status(500).send({success:false, message:'General error',e})
-    }
-}
-
-export const deleteUserPhotos=async(file,filePath)=>{
-    try {
-        let rootPath = filePath
-        const deletePath = join(rootPath,file)
-        await unlink(deletePath)
-    } catch (error) {
-        console.log(error);
-        throw new Error("Error deleting the images");
     }
 }
 
@@ -221,44 +207,6 @@ export const updatePassword = async(req,res)=>{
     }
 }
 
-
-export const changeProfilePicture = async(req,res,error)=>{
-    try {
-        if(req.file && req.filePath){
-                
-                const user = await User.findById(req.user.uid)
-                const filePath = join(req.filePath, user.profilePicture)
-                try{
-                    console.log(filePath);
-                    await unlink(filePath)
-                    user.profilePicture = req.file.filename
-                    await user.save()
-                    return res.send({success:true,message:'Profile picture changed'})
-                }catch(unlinkErr){
-                    console.error('Error deleting file', unlinkErr)
-                }
-            }
-            if(error.status === 400 || error.errors){ // === estricto | == abstracto
-                return res.status(400).send(
-                    {
-                        success: false,
-                        message: 'Error Changing the photo user',
-                        error
-                    }
-                )
-            }
-            return res.status(500).send(
-                {
-                    success: false,
-                    message: error.message
-                }
-            )
-        
-    } catch (error) {
-        console.log(error)
-        deleteFileOnError(error,req,res,'hi')
-    }
- }
 
  export const findUsername = async(req,res)=>{
     try {

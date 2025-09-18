@@ -90,7 +90,7 @@ export const register =async(req,res)=>{
         newUser.password =await encrypt(newUser.password)
         newUser.role = 'CLIENT'
         await newUser.save()
-        return res.send({success:true,message:'User Registeres successfully'})
+        return res.send({success:true,message:'User Registered successfully'})
     } catch (error) {
         console.log(error);
         return res.status(500).send({success:false,message:'General Error registering'})
