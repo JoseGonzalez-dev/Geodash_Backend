@@ -6,7 +6,8 @@ import {
     getUsers, 
     updatePassword, 
     updateUser,
-    migrateGuestToUser  // ← Agregar esta importación
+    migrateGuestToUser,  // ← Agregar esta importación
+    myProfile
 } from "./user.controller.js"
 import { isAdmin, validateJwt } from "../../middlewares/validate.jwt.js"
 import { isAdminOr, isMyProfile, updatedUserValidator, userValidator } from "../../middlewares/validators.js"
@@ -23,5 +24,6 @@ api.get('/user/:id', [validateJwt], getUser)
 api.put('/update/:id', [validateJwt, isMyProfile, updatedUserValidator], updateUser)
 api.delete('/delete/:id', [validateJwt, isAdminOr], deleteUser)
 api.put('/updatePassword', [validateJwt], updatePassword)
+api.get('/my-profile', [validateJwt], myProfile)
 
 export default api
