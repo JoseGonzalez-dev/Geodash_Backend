@@ -11,6 +11,11 @@ const api = Router()
 // 🎮 RUTAS PÚBLICAS (sin JWT) - Autenticación
 api.post('/register', [userValidator], register)
 api.post('/login', login)
-api.post('/login-guest', loginWithGuestMigration)  // Login con migración de invitado
+api.post('/login-guest', loginWithGuestMigration)  
+
+//Cron-Job
+app.get('/keep-alive', (req, res) => {
+    res.status(200).send('Servicio activo');
+})
 
 export default api
